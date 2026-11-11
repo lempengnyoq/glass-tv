@@ -36,9 +36,10 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleDebug
 
+      - 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: Glass-TV-APK
           path: launcher/app/build/outputs/apk/debug/*.apk
-          
+          if-no-files-found: error
