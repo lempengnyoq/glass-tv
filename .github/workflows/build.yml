@@ -23,27 +23,29 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          accept-android-sdk-licenses: true
+          packages: |
+            platform-tools
+            platforms;android-34
+            build-tools;34.0.0
 
-      - name: Accept Android SDK licenses
-        run: yes | sdkmanager --licenses
-
-      - name: Install Android SDK
-        run: sdkmanager "platforms;android-34" "build-tools;34.0.0"
-
-      - name: Build APK
+      - name: Build Glass TV
         working-directory: launcher
         run: |
           chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew --no-daemon :app:assembleDebug
 
-      
-      
-      
-      
-      
+      - name: Check APK
+        run: |
+          echo "Checking generated APK..."
+          find launcher/app/build/outputs/apk -type f -name "*.apk" -print
+          test -n "$(find launcher/app/build/outputs/apk -type f -name '*.apk' -print -quit)"
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: Glass-TV-APK
-          path: launcher/app/build/outputs/apk/debug/*.apk
+          path: launcher/app/build/outputs/apk/
           if-no-files-found: error
+          
